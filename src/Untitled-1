@@ -1,0 +1,70 @@
+ my_slider.prototype.buildDots = () => {
+        var _ = this;
+
+        for (var i = 0; i < _.totalSlides; i++) 
+        {
+          var dot = document.createElement('li');
+          dot.setAttribute('data-slide', i + 1);
+          _.def.dotsWrapper.appendChild(dot);
+        } 
+
+         _.def.dotsWrapper.addEventListener('click', 
+         function (e) {
+          if (e.target && e.target.nodeName == "LI") 
+          {
+            _.curSlide = e.target.getAttribute('data-slide');
+            _.gotoSlide();
+          }
+        }, false);
+      }
+      my_slider.prototype.init = function () {
+        var _ = this;
+
+        window.addEventListener("resize", on_resize(function () {
+            _.updateSliderDimension();
+          }), false);
+        
+        /* Put all slide inside a wrapper .slide-inner */
+        var nowHTML = _.def.target.innerHTML;
+        _.def.target.innerHTML = '<div class="slider-inner">' + nowHTML + '</div>';
+
+        _.allSlides = 0;
+        _.curSlide = 0;
+        _.curLeft = 0;
+        _.totalSlides = _.def.target.querySelectorAll('.slide').length;
+        _.sliderInner = _.def.target.querySelector('.slider-inner');
+        _.loadedCnt = 0;
+
+        /* Clone first and last slide (optional if you don't want a loop effect) */
+        var cloneFirst = _.def.target.querySelectorAll('.slide')[0].cloneNode(true);
+        _.sliderInner.appendChild(cloneFirst);
+        var cloneLast = _.def.target.querySelectorAll('.slide')[_.totalSlides - 1].cloneNode(true);
+        _.sliderInner.insertBefore(cloneLast, _.sliderInner.firstChild);
+
+        _.curSlide++;
+        _.allSlides = _.def.target.querySelectorAll('.slide');
+
+        _.sliderInner.style.width = (_.totalSlides + 2) * 100 + "%";
+        for (var _i = 0; _i < _.totalSlides + 2; _i++) {
+          _.allSlides[_i].style.width = 100 / (_.totalSlides + 2) + "%";
+          loadedImg(_.allSlides[_i]);
+        }
+        /* ? */
+        function on_resize(c, t) {
+            onresize = function() {
+              clearTimeout(t);
+              t = setTimeout(c, 100);
+            }
+            return onresize;
+          }
+
+          function addListenerMulti(el, s, fn) {
+            s.split(' ').forEach(function(e) {
+              return el.addEventListener(e, fn, false);
+            });
+          }function removeListenerMulti(el, s, fn) {
+            s.split(' ').forEach(function(e) {
+              return el.removeEventListener(e, fn, false);
+            });
+          }
+      }
